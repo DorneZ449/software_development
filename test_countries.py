@@ -1,3 +1,4 @@
+# Zadanie №1
 countries = ["Russia", "France", "Germany", "Japan", "Brazil"]
 capitals = ["Moscow", "Paris", "Berlin", "Tokyo", "Brasilia"]
 cords = [[55, 37], [48, 38], [52, 77], [88, 99], [35, 12]]
@@ -14,6 +15,7 @@ def test_capitals():
 def test_countries():
     for country in countries:
         assert country[0].isupper()
+
 
 
 
