@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kanban Board</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f5f6fa;
+      padding: 20px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: #2c3e50;
+    }
+
+    #date {
+      color: #7f8c8d;
+      font-size: 14px;
+    }
+
+    .board {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding-bottom: 20px;
+    }
+
+    .column {
+      min-width: 300px;
+      background: #ecf0f1;
+      border-radius: 8px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .col-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #bdc3c7;
+    }
+
+    .col-title {
+      font-weight: bold;
+      color: #2c3e50;
+      font-size: 16px;
+    }
+
+    .badge {
+      background: #3498db;
+      color: white;
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-size: 12px;
+    }
+
+    .cards {
+      flex: 1;
+      min-height: 100px;
+      padding: 5px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 10px;
+      cursor: grab;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .card:active {
+      cursor: grabbing;
+    }
+
+    .card.dragging {
+      opacity: 0.5;
+      transform: rotate(5deg);
+    }
+
+    .column.over {
+      background: #d5dbdb;
+      border: 2px dashed #3498db;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 11px;
+      margin-top: 8px;
+      font-weight: bold;
+    }
+
+    .tag-red { background: #e74c3c; color: white; }
+    .tag-blue { background: #3498db; color: white; }
+    .tag-green { background: #27ae60; color: white; }
+    .tag-purple { background: #9b59b6; color: white; }
+
+    .add-area {
+      margin-top: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .add-area input {
+      padding: 8px 12px;
+      border: 1px solid #bdc3c7;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .add-area button {
+      padding: 8px 12px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .add-area button:hover {
+      background: #2980b9;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: #34495e;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>My Board</h1>
+    <span id="date"></span>
+  </header>
+
+  <div class="board">
+
+    <div class="column" data-status="todo">
+      <div class="col-header">
+        <span class="col-title">Нужно сделать</span>
+        <span class="badge">2</span>
+      </div>
+      <div class="cards">
+        <div class="card" draggable="true">
+          <p>Написать тесты</p>
+          <span class="tag tag-red">bug</span>
+        </div>
+        <div class="card" draggable="true">
+          <p>Обновить документацию</p>
+          <span class="tag tag-purple">design</span>
+        </div>
+      </div>
+      <div class="add-area">
+        <input type="text" placeholder="Новая задача..." />
+        <button onclick="addCard(this)">+ Добавить</button>
+      </div>
+    </div>
+
+    <div class="column" data-status="in-progress">
+      <div class="col-header">
+        <span class="col-title">В процессе</span>
+        <span class="badge">2</span>
+      </div>
+      <div class="cards">
+        <div class="card" draggable="true">
+          <p>Разработка авторизации</p>
+          <span class="tag tag-blue">feature</span>
+        </div>
+        <div class="card" draggable="true">
+          <p>Исправить баг с корзиной</p>
+          <span class="tag tag-red">bug</span>
+        </div>
+      </div>
+      <div class="add-area">
+        <input type="text" placeholder="Новая задача..." />
+        <button onclick="addCard(this)">+ Добавить</button>
+      </div>
+    </div>
+
+    <div class="column" data-status="done">
+      <div class="col-header">
+        <span class="col-title">Готово</span>
+        <span class="badge">2</span>
+      </div>
+      <div class="cards">
+        <div class="card" draggable="true">
+          <p>Настройка базы данных</p>
+          <span class="tag tag-green">fix</span>
+        </div>
+        <div class="card" draggable="true">
+          <p>Дизайн главной страницы</p>
+          <span class="tag tag-purple">design</span>
+        </div>
+      </div>
+      <div class="add-area">
+        <input type="text" placeholder="Новая задача..." />
+        <button onclick="addCard(this)">+ Добавить</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Установка текущей даты
+    document.getElementById('date').textContent = new Date().toLocaleDateString('ru-RU', {
+      weekday: 'long', 
+      day: 'numeric', 
+      month: 'long'
+    });
+
+    let dragged = null;
+
+    // Обработчики drag and drop
+    document.addEventListener('dragstart', e => {
+      if (e.target.classList.contains('card')) {
+        dragged = e.target;
+        setTimeout(() => e.target.classList.add('dragging'), 0);
+      }
+    });
+
+    document.addEventListener('dragend', e => {
+      e.target.classList.remove('dragging');
+      document.querySelectorAll('.column').forEach(c => c.classList.remove('over'));
+    });
+
+    document.querySelectorAll('.column').forEach(col => {
+      col.addEventListener('dragover', e => {
+        e.preventDefault();
+        col.classList.add('over');
+      });
+      
+      col.addEventListener('dragleave', () => {
+        col.classList.remove('over');
+      });
+      
+      col.addEventListener('drop', () => {
+        if (dragged) {
+          col.querySelector('.cards').appendChild(dragged);
+          updateBadges();
+        }
+        col.classList.remove('over');
+      });
+    });
+
+    // Функция добавления новой карточки
+    function addCard(btn) {
+      const input = btn.previousElementSibling;
+      const text = input.value.trim();
+      if (!text) return;
+      
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.draggable = true;
+      card.innerHTML = `<p>${text}</p>`;
+      
+      btn.closest('.column').querySelector('.cards').appendChild(card);
+      input.value = '';
+      updateBadges();
+      
+      // Добавляем обработчики для новой карточки
+      card.addEventListener('dragstart', handleDragStart);
+      card.addEventListener('dragend', handleDragEnd);
+    }
+
+    // Обновление счетчиков в колонках
+    function updateBadges() {
+      document.querySelectorAll('.column').forEach(col => {
+        const count = col.querySelectorAll('.card').length;
+        col.querySelector('.badge').textContent = count;
+      });
+    }
+
+    // Обработчики для существующих карточек
+    function handleDragStart(e) {
+      if (e.target.classList.contains('card')) {
+        dragged = e.target;
+        setTimeout(() => e.target.classList.add('dragging'), 0);
+      }
+    }
+
+    function handleDragEnd(e) {
+      e.target.classList.remove('dragging');
+      document.querySelectorAll('.column').forEach(c => c.classList.remove('over'));
+    }
+
+    // Добавляем обработчики к существующим карточкам
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('dragstart', handleDragStart);
+      card.addEventListener('dragend', handleDragEnd);
+    });
+
+    // Инициализация счетчиков при загрузке
+    updateBadges();
+  </script>
+
+</body>
+</html>
