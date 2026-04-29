@@ -3,3 +3,4 @@
 - В файле "Kanban(exe)" Kanban доска, чтобы запустить нужно перейти в папку App и запустить KanbanBoard.exe
 - В файле "kanban-board(html)" Kanban доска (local-web версия), чтобы запустить перейдите в папку dist и запустите index.html.
 **(Kanban В html вышел лучше чем в exe)**
+- В файле "quadratic equation" exe приложение с решением квадратного ур-я.
